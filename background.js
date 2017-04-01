@@ -44,7 +44,33 @@ chrome.contextMenus.create({
 });
 
 browser.runtime.onMessage.addListener( (msg, sender, sendRes) => {
-  console.log(sender.url);
+  if (msg.behavior != 'init') return;
+  browser.storage.local.get( results => {
+    if ((typeof results.length === 'number') && (results.length > 0)) {
+			results = results[0];
+    }
+
+    sendRes(results[msg.url]);
+  });
+  return true;
+});
+
+browser.runtime.onMessage.addListener( (msg, sender, sendRes) => {
+  if (msg.behavior != 'del_memo') return;
+  browser.storage.local.get( results => {
+    if ((typeof results.length === 'number') && (results.length > 0)) {
+			results = results[0];
+    }
+
+    delete results[msg.url][msg.memo_id];
+    browser.storage.local.set(results);
+  });
+  return true;
+});
+
+
+browser.runtime.onMessage.addListener( (msg, sender, sendRes) => {
+  if (msg.behavior != 'record_mouse_position') return;
   contextmenu_info = {
     x: msg.x,
     atTab: sender.tab.id,
@@ -53,3 +79,23 @@ browser.runtime.onMessage.addListener( (msg, sender, sendRes) => {
   };
   return true; // for send res async
 });
+
+browser.runtime.onMessage.addListener( msg => {
+  if (msg.behavior != 'save_memo') return;
+
+  browser.storage.local.get( results => {
+    if ((typeof results.length === 'number') && (results.length > 0)) {
+			results = results[0];
+    }
+
+    var pageMemo_data = results || {};
+    var data = pageMemo_data[msg.url] = pageMemo_data[msg.url] || {};
+    var memo = data[msg.memo_id] = data[msg.memo_id] || {};
+
+    memo.position = msg.position;
+    memo.val = msg.val;
+
+    browser.storage.local.set(pageMemo_data);
+  });
+});
+
