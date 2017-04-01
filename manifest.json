@@ -12,6 +12,6 @@
   "background" : {
     "scripts": ["background.js"]
   },
-  "permissions": [ "contextMenus", "tabs", "storage", "http://*/", "https://*/"],
+  "permissions": [ "contextMenus", "storage", "http://*/", "https://*/"],
   "default_locale": "en"
 }

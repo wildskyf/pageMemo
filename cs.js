@@ -12,6 +12,7 @@ document.addEventListener('contextmenu', e => {
 
     // div
     newDiv.classList.add('pageMemo');
+    newDiv.dataset['pagememoId'] = document.querySelectorAll('.pageMemo').length + 1;
     newDiv.style.position = 'absolute';
     newDiv.style.top = y + 'px';
     if (isRight)
@@ -33,6 +34,10 @@ document.addEventListener('contextmenu', e => {
     }
 
     // btn
+    newBtn.addEventListener('click', () => {
+      newBtn.parentNode.remove();
+      // TODO: send del data to background
+    });
     var btnStyles = {
       'color': '#343434',
       'cursor': 'pointer',
