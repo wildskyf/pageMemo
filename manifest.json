@@ -1,0 +1,17 @@
+{
+  "name": "__MSG_appName__",
+  "version": "0.1.0",
+  "description": "__MSG_appDesc__",
+  "manifest_version": 2,
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["cs.js"]
+    }
+  ],
+  "background" : {
+    "scripts": ["background.js"]
+  },
+  "permissions": [ "contextMenus", "tabs", "storage", "http://*/", "https://*/"],
+  "default_locale": "en"
+}
