@@ -1,9 +1,9 @@
 var createMemo = info => {
-  var {x,y,isRight} = info;
-  var val = info.val;
+  var {x, y, isRight, val} = info;
 
   var newDiv = document.createElement('div');
   var newTextarea = document.createElement('textarea');
+  var newHoldbar = document.createElement('div');
   var newBtn = document.createElement('a');
   var newBtnText = document.createTextNode('X');
 
@@ -12,20 +12,29 @@ var createMemo = info => {
   newDiv.dataset['pagememoId'] = document.querySelectorAll('.pageMemo').length; // start from 0
   newDiv.style.position = 'absolute';
   newDiv.style.top = parseInt(y) + 'px';
+  newDiv.style.zIndex = 9999;
   if (isRight)
     newDiv.style.right = parseInt(x) + 'px';
   else
     newDiv.style.left = parseInt(x) + 'px';
+
+  newTextarea.addEventListener('focus', () => {
+    newDiv.style.opacity = '1';
+  });
+  newTextarea.addEventListener('focusout', () => {
+    newDiv.style.opacity = '0.2';
+  });
 
   // textarea
   newTextarea.rows = "7";
   if (val) newTextarea.value = val;
   var memoStyles = {
     'background': 'lightyellow',
+    'color':      '#555',
     'outline':    'none',
     'border':     '1px solid #999',
-    'padding':    '1em',
-    'boxShadow': '1px 1px 5px rgba(0,0,0,0.2)'
+    'padding':    '2em 1em 1em',
+    'boxShadow':  '1px 1px 5px rgba(0,0,0,0.2)'
   };
   for( var style in memoStyles) {
     newTextarea.style[style] = memoStyles[style];
@@ -39,7 +48,8 @@ var createMemo = info => {
       position: {
         x: newDiv.style.left || newDiv.style.right,
         y: newDiv.style.top,
-        isRight: !!newDiv.style.right,
+        width: newDiv.style.width,
+        isRight: !!(newDiv.style.right && newDiv.style.right !== "auto"),
       }
     });
   };
@@ -51,6 +61,60 @@ var createMemo = info => {
     if (ta_counter % 10 != 0) return;
     sendData();
   });
+
+  // holdbar
+  var moving = false;
+
+  var toggleMoving = () => {
+    moving = !moving;
+    if (moving) {
+      newHoldbar.style.cursor = 'grabbing';
+      newTextarea.style.cursor = 'grabbing';
+
+      $width = newDiv.offsetWidth / 2;
+
+      document.addEventListener('mousemove', e => {
+        if (moving) {
+          var x = e.clientX - $width;
+          var y = e.clientY;
+
+          newDiv.style.left = x+'px';
+          newDiv.style.right = 'auto';
+          newDiv.style.top = y+'px';
+        };
+      });
+    }
+    else {
+      newHoldbar.style.cursor = 'grab';
+      newTextarea.style.cursor = 'auto';
+      sendData();
+    }
+  }
+
+  newHoldbar.addEventListener('click', toggleMoving);
+  newHoldbar.addEventListener('mouseover', () => {
+    var hintText = document.createElement('SPAN');
+    hintText.innerHTML = 'click to move';
+    hintText.style.color = 'rgba(0,0,0,0.3)';
+    newHoldbar.appendChild(hintText);
+  });
+  newHoldbar.addEventListener('mouseout', () => {
+    newHoldbar.innerHTML = '';
+  });
+
+  var holdbarStyles = {
+    'cursor': 'grab',
+    'position': 'absolute',
+    'top': '0',
+    'left': '0',
+    'width': '100%',
+    'height': '18px',
+    'textAlign': 'center',
+    'background': 'transparent linear-gradient(rgba(0, 0, 0, 0.1), transparent) repeat scroll 0% 0%'
+  };
+  for( var style in holdbarStyles) {
+    newHoldbar.style[style] = holdbarStyles[style];
+  }
 
   // btn
   newBtn.addEventListener('click', () => {
@@ -81,6 +145,7 @@ var createMemo = info => {
   });
 
   newBtn.appendChild(newBtnText);
+  newDiv.appendChild(newHoldbar);
   newDiv.appendChild(newBtn);
   newDiv.appendChild(newTextarea);
   document.body.appendChild(newDiv);
@@ -109,7 +174,6 @@ browser.runtime.sendMessage({
   if (memos) {
     for (var key in memos) {
       var memo = memos[key];
-      console.log(memo);
       createMemo({
         x: memo.position.x,
         isRight: memo.position.isRight,

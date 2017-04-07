@@ -8,7 +8,7 @@ var pageMemoFunc = {
   'new-note': info => {
     var cm = contextmenu_info, x = null, isRight = false;
     if (cm.x < cm.pageWidth/2) {
-      x = cm.x - 200;
+      x = cm.x;
       x = x < 20 ? 20 : x;
       isRight = false;
     }
