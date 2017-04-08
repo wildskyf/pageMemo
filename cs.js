@@ -89,10 +89,11 @@ var createMemo = info => {
 
   newHoldbar.addEventListener('click', toggleMoving);
   newHoldbar.addEventListener('mouseover', () => {
-    var hintText = document.createElement('SPAN');
-    hintText.innerHTML = browser.i18n.getMessage("moveHint");
-    hintText.style.color = 'rgba(0,0,0,0.3)';
-    newHoldbar.appendChild(hintText);
+    var hintSpan = document.createElement('SPAN');
+    var newBtnText = document.createTextNode(browser.i18n.getMessage("moveHint"));
+    hintSpan.appendChild(newBtnText);
+    hintSpan.style.color = 'rgba(0,0,0,0.3)';
+    newHoldbar.appendChild(hintSpan);
   });
   newHoldbar.addEventListener('mouseout', () => {
     newHoldbar.innerHTML = '';
