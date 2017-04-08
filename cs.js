@@ -1,5 +1,5 @@
 var createMemo = info => {
-  var {x, y, isRight, val} = info;
+  var {x, y, val} = info;
 
   var newDiv = document.createElement('div');
   var newTextarea = document.createElement('textarea');
@@ -13,10 +13,7 @@ var createMemo = info => {
   newDiv.style.position = 'absolute';
   newDiv.style.top = parseInt(y) + 'px';
   newDiv.style.zIndex = 9999;
-  if (isRight)
-    newDiv.style.right = parseInt(x) + 'px';
-  else
-    newDiv.style.left = parseInt(x) + 'px';
+  newDiv.style.left = parseInt(x) + 'px';
 
   newTextarea.addEventListener('focus', () => {
     newDiv.style.opacity = '1';
@@ -46,10 +43,9 @@ var createMemo = info => {
       memo_id: newTextarea.parentNode.dataset['pagememoId'],
       val: newTextarea.value,
       position: {
-        x: newDiv.style.left || newDiv.style.right,
+        x: newDiv.style.left,
         y: newDiv.style.top,
-        width: newDiv.style.width,
-        isRight: !!(newDiv.style.right && newDiv.style.right !== "auto"),
+        width: newDiv.style.width
       }
     });
   };
@@ -64,7 +60,6 @@ var createMemo = info => {
 
   // holdbar
   var moving = false;
-
   var toggleMoving = () => {
     moving = !moving;
     if (moving) {
@@ -79,8 +74,8 @@ var createMemo = info => {
           var y = e.clientY;
 
           newDiv.style.left = x+'px';
-          newDiv.style.right = 'auto';
           newDiv.style.top = y+'px';
+          newDiv.style.right = undefined;
         };
       });
     }
@@ -161,7 +156,6 @@ document.addEventListener('contextmenu', e => {
   }).then( res => {
     createMemo({
       x: res.x,
-      isRight: res.isRight,
       y: e.clientY + document.body.scrollTop + document.documentElement.scrollTop
     });
   });
@@ -176,7 +170,6 @@ browser.runtime.sendMessage({
       var memo = memos[key];
       createMemo({
         x: memo.position.x,
-        isRight: memo.position.isRight,
         y: memo.position.y,
         val: memo.val
       });

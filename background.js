@@ -16,18 +16,8 @@ var pageMemo = {
     var pageMemoFunc = {
       'new-note': info => {
         isDev && console.log('ContextMenu new-note onClicked');
-        var cm = pageMemo.contextmenu_info, x = null, isRight = false;
-        if (cm.x < cm.pageWidth/2) {
-          x = cm.x;
-          x = x < 20 ? 20 : x;
-          isRight = false;
-        }
-        else {
-          x = cm.x + 200;
-          x = x > (cm.pageWidth - 20) ? 20 : (cm.pageWidth - x);
-          isRight = true;
-        }
-        cm.sendRes({ x: x, isRight: isRight });
+        var cm = pageMemo.contextmenu_info, x = null;
+        cm.sendRes({ x: cm.x });
       },
 
       'show-notes': info => {
