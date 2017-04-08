@@ -25,7 +25,7 @@ var pageMemo = {
       }
     };
 
-    chrome.contextMenus.onClicked.addListener((info, tab) => {
+    browser.contextMenus.onClicked.addListener((info, tab) => {
       pageMemoFunc[info.menuItemId](info);
     });
 
@@ -39,13 +39,13 @@ var pageMemo = {
       show_notes: 'show-notes'
     };
 
-    chrome.contextMenus.create({
+    browser.contextMenus.create({
       id: menu.new_note,
       title: "Create New Note",
       contexts: ["all"]
     });
 
-    chrome.contextMenus.create({
+    browser.contextMenus.create({
       id: menu.show_notes,
       type: "checkbox",
       title: "Show All Notes",
