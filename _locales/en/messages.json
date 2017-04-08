@@ -4,5 +4,8 @@
     },
     "appDesc":{
         "message": "Provide user to write note in any page."
+    },
+    "moveHint":{
+      "message": "click to move"
     }
 }

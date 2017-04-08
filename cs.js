@@ -63,6 +63,7 @@ var createMemo = info => {
   var toggleMoving = () => {
     moving = !moving;
     if (moving) {
+      newDiv.style.opacity = '1';
       newHoldbar.style.cursor = 'grabbing';
       newTextarea.style.cursor = 'grabbing';
 
@@ -89,7 +90,7 @@ var createMemo = info => {
   newHoldbar.addEventListener('click', toggleMoving);
   newHoldbar.addEventListener('mouseover', () => {
     var hintText = document.createElement('SPAN');
-    hintText.innerHTML = 'click to move';
+    hintText.innerHTML = browser.i18n.getMessage("moveHint");
     hintText.style.color = 'rgba(0,0,0,0.3)';
     newHoldbar.appendChild(hintText);
   });

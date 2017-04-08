@@ -4,5 +4,8 @@
     },
     "appDesc":{
         "message": "讓你在瀏覽網頁時可以隨時隨地做筆記。"
+    },
+    "moveHint":{
+      "message": "點選以移動"
     }
 }
