@@ -96,7 +96,7 @@ var createMemo = info => {
     newHoldbar.appendChild(hintSpan);
   });
   newHoldbar.addEventListener('mouseout', () => {
-    newHoldbar.innerHTML = '';
+    newHoldbar.textContent = '';
   });
 
   var holdbarStyles = {
