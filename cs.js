@@ -179,3 +179,14 @@ browser.runtime.sendMessage({
   }
 });
 
+browser.runtime.onMessage.addListener( (msg, sender, sendRes) => {
+  var all_notes = Array.from(document.querySelectorAll('.pageMemo'));
+  all_notes.forEach( note => {
+    if (msg.behavior == 'show-all') {
+      note.style.display = 'block';
+    }
+    else if (msg.behavior == 'hide-all') {
+      note.style.display = 'none';
+    }
+  });
+});

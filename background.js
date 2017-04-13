@@ -1,4 +1,4 @@
-var isDev = true;
+var isDev = false;
 
 var pageMemo = {
   contextmenu_info: null,
@@ -20,13 +20,25 @@ var pageMemo = {
         cm.sendRes({ x: cm.x });
       },
 
-      'show-notes': info => {
-        isDev && console.log('ContextMenu show-note onClicked');
+      'show-notes': (info, tab) => {
+        isDev && console.log('ContextMenu show-note onClicked', info, tab);
+
+        // show all
+        if (info.checked) {
+          browser.tabs.sendMessage(tab.id, {
+            behavior: 'show-all'
+          });
+        }
+        else {
+          browser.tabs.sendMessage(tab.id, {
+            behavior: 'hide-all'
+          });
+        }
       }
     };
 
     browser.contextMenus.onClicked.addListener((info, tab) => {
-      pageMemoFunc[info.menuItemId](info);
+      pageMemoFunc[info.menuItemId](info, tab);
     });
 
     return pageMemo;
@@ -50,7 +62,7 @@ var pageMemo = {
       type: "checkbox",
       title: "Show All Notes",
       contexts: ["all"],
-      checked: false
+      checked: true
     });
     return pageMemo;
   },
