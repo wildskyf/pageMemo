@@ -39,7 +39,7 @@ var createMemo = info => {
   var sendData = () => {
     browser.runtime.sendMessage({
       behavior: 'save_memo',
-      url: location.host + location.pathname,
+      url: location.href,
       memo_id: newTextarea.parentNode.dataset['pagememoId'],
       val: newTextarea.value,
       position: {
@@ -118,7 +118,7 @@ var createMemo = info => {
     newBtn.parentNode.remove();
     browser.runtime.sendMessage({
       behavior: 'del_memo',
-      url: location.host + location.pathname,
+      url: location.href,
       memo_id: newBtn.parentNode.dataset['pagememoId']
     });
   });
@@ -165,7 +165,7 @@ document.addEventListener('contextmenu', e => {
 
 browser.runtime.sendMessage({
   behavior: 'init',
-  url: location.host + location.pathname
+  url: location.href
 }).then( memos => {
   if (memos) {
     for (var key in memos) {
