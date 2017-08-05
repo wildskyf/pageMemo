@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>List All Memo</title>
+  <style>
+    body {
+      padding: 20px 10px;
+    }
+    h1 {
+      font-size: 16px;
+      margin: 4px;
+      padding: 4px;
+    }
+    table {
+      border-collapse: collapse;
+      min-width: 500px;
+    }
+    td {
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+    th {
+      font-weight: bold;
+    }
+    th, td {
+      padding: 5px;
+    }
+    tr.title {
+      background: #999;
+      color: #fff;
+    }
+    tr:not(.title):hover {
+      background: #eee;
+    }
+  </style>
+  <script src="list.js"></script>
+</head>
+<body>
+  <h1>Your Saved Memos</h1>
+  <table id="memo-list">
+    <tr class="title">
+      <th>url</th>
+      <th>content</th>
+    </tr>
+  </table>
+</body>
+</html>
