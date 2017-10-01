@@ -34,6 +34,12 @@ var pageMemo = {
             behavior: 'hide-all'
           });
         }
+      },
+
+      'open-list': (info, tab) => {
+        isDev && console.log('ContextMenu open-list onClicked', info, tab);
+
+        browser.tabs.create({ url: browser.extension.getURL("list.html") });
       }
     };
 
@@ -48,7 +54,8 @@ var pageMemo = {
     isDev && console.log('create ContextMenu Button');
     var menu = {
       new_note: 'new-note',
-      show_notes: 'show-notes'
+      show_notes: 'show-notes',
+      open_list: 'open-list'
     };
 
     browser.contextMenus.create({
@@ -64,6 +71,13 @@ var pageMemo = {
       contexts: ["all"],
       checked: true
     });
+
+    browser.contextMenus.create({
+      id: menu.open_list,
+      title: "Open Note List",
+      contexts: ["all"]
+    });
+
     return pageMemo;
   },
 
