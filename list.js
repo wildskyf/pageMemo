@@ -26,12 +26,14 @@ window.onload = () => {
         $tr.append($td_url);
         $tr.append($td_content);
 
+        $tr.dataset.url = url;
         $td_url.textContent = url;
-        $td_url.dataset.url = url;
         $td_content.textContent = content.val;
 
         $tr.addEventListener('click', event => {
-          browser.tabs.create({url: event.target.dataset.url });
+          var target = event.target;
+          if (!target.dataset.url) target = target.parentElement;
+          browser.tabs.create({url: target.dataset.url });
         });
       }
     }
