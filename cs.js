@@ -9,7 +9,7 @@ var createMemo = info => {
 
   // div
   newDiv.classList.add('pageMemo');
-  newDiv.dataset['pagememoId'] = document.querySelectorAll('.pageMemo').length; // start from 0
+  newDiv.dataset['pagememoId'] = key || window.crypto.getRandomValues(new Uint16Array(1)); // start from 0
   newDiv.style.position = 'absolute';
   newDiv.style.top = parseInt(y) + 'px';
   newDiv.style.zIndex = 9999;
@@ -173,7 +173,8 @@ browser.runtime.sendMessage({
       createMemo({
         x: memo.position.x,
         y: memo.position.y,
-        val: memo.val
+        val: memo.val,
+        key: key
       });
     }
   }
