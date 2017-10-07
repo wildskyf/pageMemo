@@ -72,7 +72,7 @@ var createMemo = info => {
       document.addEventListener('mousemove', e => {
         if (moving) {
           var x = e.clientX - $width;
-          var y = e.clientY;
+          var y = e.clientY - document.querySelector('body').getBoundingClientRect().y;
 
           newDiv.style.left = x+'px';
           newDiv.style.top = y+'px';
