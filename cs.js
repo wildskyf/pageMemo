@@ -1,11 +1,11 @@
 var createMemo = info => {
-  var {x, y, val} = info;
+  var {x, y, val, key, isInit} = info;
 
   var newDiv = document.createElement('div');
   var newTextarea = document.createElement('textarea');
   var newHoldbar = document.createElement('div');
-  var newBtn = document.createElement('a');
-  var newBtnText = document.createTextNode('X');
+  var delBtn = document.createElement('a');
+  var optionBtn = document.createElement('a');
 
   // div
   newDiv.classList.add('pageMemo');
@@ -90,8 +90,8 @@ var createMemo = info => {
   newHoldbar.addEventListener('click', toggleMoving);
   newHoldbar.addEventListener('mouseover', () => {
     var hintSpan = document.createElement('SPAN');
-    var newBtnText = document.createTextNode(browser.i18n.getMessage("moveHint"));
-    hintSpan.appendChild(newBtnText);
+    var hintText = document.createTextNode(browser.i18n.getMessage("moveHint"));
+    hintSpan.appendChild(hintText);
     hintSpan.style.color = 'rgba(0,0,0,0.3)';
     newHoldbar.appendChild(hintSpan);
   });
@@ -113,41 +113,67 @@ var createMemo = info => {
     newHoldbar.style[style] = holdbarStyles[style];
   }
 
-  // btn
-  newBtn.addEventListener('click', () => {
-    newBtn.parentNode.remove();
-    browser.runtime.sendMessage({
-      behavior: 'del_memo',
-      url: location.href,
-      memo_id: newBtn.parentNode.dataset['pagememoId']
-    });
-  });
   var btnStyles = {
     'color': '#343434',
     'cursor': 'pointer',
     'float': 'right',
-    'right': '0',
     'position': 'absolute',
     'padding': '3px 5px',
     'textDecoration': 'none'
   };
-  for( var style in btnStyles) {
-    newBtn.style[style] = btnStyles[style];
-  }
-  newBtn.addEventListener('mouseover', () => {
-    newBtn.style.color = '#aaa';
+
+  // delete button
+  delBtn.addEventListener('click', () => {
+    delBtn.parentNode.remove();
+    browser.runtime.sendMessage({
+      behavior: 'del_memo',
+      url: location.href,
+      memo_id: delBtn.parentNode.dataset['pagememoId']
+    });
   });
-  newBtn.addEventListener('mouseout', () => {
-    newBtn.style.color = '#343434';
+  delBtn.title = "delete";
+  for( var style in btnStyles) {
+    delBtn.style[style] = btnStyles[style];
+  }
+  delBtn.style.right = '0';
+  delBtn.addEventListener('mouseover', () => {
+    delBtn.style.color = '#aaa';
+  });
+  delBtn.addEventListener('mouseout', () => {
+    delBtn.style.color = '#343434';
   });
 
-  newBtn.appendChild(newBtnText);
+  // option button
+  optionBtn.addEventListener('click', () => {
+    // alert('You would be able to customize note here.')
+    browser.runtime.sendMessage({
+      behavior: 'update_memo',
+      url: location.href,
+      memo_id: optionBtn.parentNode.dataset['pagememoId']
+    });
+  });
+  optionBtn.title = "options (coming soon)";
+  for( var style in btnStyles) {
+    optionBtn.style[style] = btnStyles[style];
+  }
+  optionBtn.style.left = '0';
+  optionBtn.addEventListener('mouseover', () => {
+    optionBtn.style.color = '#aaa';
+  });
+  optionBtn.addEventListener('mouseout', () => {
+    optionBtn.style.color = '#343434';
+  });
+
+
+  delBtn.textContent = 'X';
+  optionBtn.textContent = 'O';
   newDiv.appendChild(newHoldbar);
-  newDiv.appendChild(newBtn);
+  newDiv.appendChild(delBtn);
+  newDiv.appendChild(optionBtn);
   newDiv.appendChild(newTextarea);
   document.body.appendChild(newDiv);
 
-  newTextarea.focus();
+  if (!isInit) newTextarea.focus();
 };
 
 document.addEventListener('contextmenu', e => {
@@ -158,7 +184,8 @@ document.addEventListener('contextmenu', e => {
   }).then( res => {
     createMemo({
       x: res.x,
-      y: e.clientY + document.body.scrollTop + document.documentElement.scrollTop
+      y: e.clientY + document.body.scrollTop + document.documentElement.scrollTop,
+      isInit: false
     });
   });
 });
@@ -174,6 +201,7 @@ browser.runtime.sendMessage({
         x: memo.position.x,
         y: memo.position.y,
         val: memo.val,
+        isInit: true,
         key: key
       });
     }
