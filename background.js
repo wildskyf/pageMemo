@@ -133,6 +133,7 @@ var pageMemo = {
 
             memo.position = msg.position;
             memo.val = msg.val;
+            memo.color = msg.color;
 
             browser.storage.local.set(pageMemo_data);
           });

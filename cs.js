@@ -1,5 +1,6 @@
+const COLORs = ['lightyellow', 'lightblue', 'pink', 'lightgreen'];
 var createMemo = info => {
-  var {x, y, val, key, isInit} = info;
+  var {x, y, val, color, key, isInit} = info;
 
   var newDiv = document.createElement('div');
   var newTextarea = document.createElement('textarea');
@@ -14,6 +15,8 @@ var createMemo = info => {
   newDiv.style.top = parseInt(y) + 'px';
   newDiv.style.zIndex = 9999;
   newDiv.style.left = parseInt(x) + 'px';
+  newDiv.style.fontSize = '14px';
+  newDiv.style.fontFamily = 'Arial, Helvetica, sans-serif';
 
   newTextarea.addEventListener('focus', () => {
     newDiv.style.opacity = '1';
@@ -26,7 +29,7 @@ var createMemo = info => {
   newTextarea.rows = "7";
   if (val) newTextarea.value = val;
   var memoStyles = {
-    'background': 'lightyellow',
+    'background': color || COLORs[0],
     'color':      '#555',
     'outline':    'none',
     'border':     '1px solid #999',
@@ -42,6 +45,7 @@ var createMemo = info => {
       url: location.href,
       memo_id: newTextarea.parentNode.dataset['pagememoId'],
       val: newTextarea.value,
+      color: newTextarea.style.backgroundColor,
       position: {
         x: newDiv.style.left,
         y: newDiv.style.top,
@@ -144,15 +148,16 @@ var createMemo = info => {
   });
 
   // option button
-  optionBtn.addEventListener('click', () => {
-    // alert('You would be able to customize note here.')
-    browser.runtime.sendMessage({
-      behavior: 'update_memo',
-      url: location.href,
-      memo_id: optionBtn.parentNode.dataset['pagememoId']
-    });
+  optionBtn.addEventListener('click', e => {
+    var {target} = e,
+      div = target.parentNode,
+      ta_style = div.querySelector('textarea').style;
+    var currentColorNo = COLORs.indexOf(ta_style.backgroundColor);
+    ta_style.backgroundColor = COLORs[(currentColorNo + 1) % COLORs.length];
+    div.style.opacity = '1';
+    sendData();
   });
-  optionBtn.title = "options (coming soon)";
+  optionBtn.title = "change color";
   for( var style in btnStyles) {
     optionBtn.style[style] = btnStyles[style];
   }
@@ -201,6 +206,7 @@ browser.runtime.sendMessage({
         x: memo.position.x,
         y: memo.position.y,
         val: memo.val,
+        color: memo.color,
         isInit: true,
         key: key
       });
