@@ -35,36 +35,26 @@ var Memo = {
   },
 
   _createHolder: () => {
-    var { $newHoldbar, $newTextarea, $newDiv, _save } = Memo;
+    var { $newDiv, $newHoldbar, $newTextarea, $newDiv, _save } = Memo;
 
-    var moving = false;
-    var toggleMoving = () => {
-      moving = !moving;
-      if (moving) {
-        $newHoldbar.style.cursor = 'grabbing';
-        $newTextarea.style.cursor = 'grabbing';
-
-        width = $newDiv.offsetWidth / 2;
-
-        document.addEventListener('mousemove', e => {
-          if (moving) {
-            var x = e.clientX - width;
-            var y = e.clientY - document.querySelector('body').getBoundingClientRect().y;
-
-            $newDiv.style.left = x+'px';
-            $newDiv.style.top = y+'px';
-            $newDiv.style.right = undefined;
-          };
-        });
-      }
-      else {
-        $newHoldbar.style.cursor = 'grab';
-        $newTextarea.style.cursor = 'auto';
-        _save();
-      }
+    // ref: http://jsfiddle.net/fpb7j/1/
+    var eleMouseMove = ev => {
+      var pX = ev.pageX - ( $newDiv.clientWidth/2 );
+      var pY = ev.pageY - 10;
+      $newDiv.style.left = pX + "px";
+      $newDiv.style.top = pY + "px";
+      document.addEventListener("mouseup" , eleMouseUp , false);
     }
 
-    $newHoldbar.addEventListener('click', toggleMoving);
+    function eleMouseUp () {
+      document.removeEventListener("mousemove" , eleMouseMove , false);
+      document.removeEventListener("mouseup" , eleMouseUp , false);
+      _save();
+    }
+
+    $newHoldbar.addEventListener("mousedown", () => {
+      document.addEventListener("mousemove" , eleMouseMove , false);
+    }, false);
     $newHoldbar.classList.add('holder');
     $newHoldbar.textContent = browser.i18n.getMessage("moveHint");
   },
