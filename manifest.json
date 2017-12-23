@@ -6,13 +6,13 @@
     }
   },
   "name": "__MSG_appName__",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "__MSG_appDesc__",
   "manifest_version": 2,
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["cs.js"]
+      "js": ["content-script.js"]
     }
   ],
   "background" : {
