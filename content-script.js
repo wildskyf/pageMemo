@@ -67,6 +67,7 @@ var Memo = {
     $delBtn.title = "delete";
     $delBtn.textContent = 'X';
     $delBtn.addEventListener('click', () => {
+      if (!confirm(browser.i18n.getMessage("confirmDel"))) return;
       $delBtn.parentNode.remove();
       browser.runtime.sendMessage({
         behavior: 'del_memo',
