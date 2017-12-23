@@ -1,184 +1,141 @@
 const COLORs = ['lightyellow', 'lightblue', 'pink', 'lightgreen'];
-var createMemo = info => {
-  var {x, y, val, color, key, isInit} = info;
 
-  var newDiv = document.createElement('div');
-  var newTextarea = document.createElement('textarea');
-  var newHoldbar = document.createElement('div');
-  var delBtn = document.createElement('a');
-  var optionBtn = document.createElement('a');
+var Memo = {
+  $container: null,
+  $newDiv: document.createElement('div'),
+  $newHoldbar: document.createElement('div'),
+  $delBtn: document.createElement('a'),
+  $optionBtn: document.createElement('a'),
+  $newTextarea: document.createElement('textarea'),
 
-  // div
-  newDiv.classList.add('pageMemo');
-  newDiv.dataset['pagememoId'] = key || window.crypto.getRandomValues(new Uint16Array(1)); // start from 0
-  newDiv.style.position = 'absolute';
-  newDiv.style.top = parseInt(y) + 'px';
-  newDiv.style.zIndex = 9999;
-  newDiv.style.left = parseInt(x) + 'px';
-  newDiv.style.fontSize = '14px';
-  newDiv.style.fontFamily = 'Arial, Helvetica, sans-serif';
+  create: info => {
+    var me = Memo;
+    var { key, x, y, val, color, isInit } = info;
 
-  newTextarea.addEventListener('focus', () => {
-    newDiv.style.opacity = '1';
-  });
-  newTextarea.addEventListener('focusout', () => {
-    newDiv.style.opacity = '0.2';
-  });
+    me._createContnainer({
+      key: key,
+      x: x,
+      y: y
+    });
+    me._createHolder();
+    me._createButtons();
+    me._createTextarea({
+      val: val,
+      color: color
+    });
+    me._combine(isInit);
+  },
 
-  // textarea
-  newTextarea.rows = "7";
-  if (val) newTextarea.value = val;
-  var memoStyles = {
-    'background': color || COLORs[0],
-    'color':      '#555',
-    'outline':    'none',
-    'border':     '1px solid #999',
-    'padding':    '2em 1em 1em',
-    'boxShadow':  '1px 1px 5px rgba(0,0,0,0.2)'
-  };
-  for( var style in memoStyles) {
-    newTextarea.style[style] = memoStyles[style];
-  }
-  var sendData = () => {
+  _createContnainer: info => {
+    var { $newDiv } = Memo;
+    $newDiv.classList.add('pageMemo');
+    $newDiv.dataset['pagememoId'] = info.key || window.crypto.getRandomValues(new Uint16Array(1)); // start from 0
+    $newDiv.style.top = parseInt(info.y) + 'px';
+    $newDiv.style.left = parseInt(info.x) + 'px';
+  },
+
+  _createHolder: () => {
+    var { $newHoldbar, $newTextarea, $newDiv, _save } = Memo;
+
+    var moving = false;
+    var toggleMoving = () => {
+      moving = !moving;
+      if (moving) {
+        $newHoldbar.style.cursor = 'grabbing';
+        $newTextarea.style.cursor = 'grabbing';
+
+        width = $newDiv.offsetWidth / 2;
+
+        document.addEventListener('mousemove', e => {
+          if (moving) {
+            var x = e.clientX - width;
+            var y = e.clientY - document.querySelector('body').getBoundingClientRect().y;
+
+            $newDiv.style.left = x+'px';
+            $newDiv.style.top = y+'px';
+            $newDiv.style.right = undefined;
+          };
+        });
+      }
+      else {
+        $newHoldbar.style.cursor = 'grab';
+        $newTextarea.style.cursor = 'auto';
+        _save();
+      }
+    }
+
+    $newHoldbar.addEventListener('click', toggleMoving);
+    $newHoldbar.classList.add('holder');
+    $newHoldbar.textContent = browser.i18n.getMessage("moveHint");
+  },
+
+  _createButtons: () => {
+    var { $delBtn, $optionBtn, _save } = Memo;
+
+    // delete button
+    $delBtn.classList.add('delete', 'btn');
+    $delBtn.title = "delete";
+    $delBtn.textContent = 'X';
+    $delBtn.addEventListener('click', () => {
+      $delBtn.parentNode.remove();
+      browser.runtime.sendMessage({
+        behavior: 'del_memo',
+        url: location.href,
+        memo_id: $delBtn.parentNode.dataset['pagememoId']
+      });
+    });
+
+    // option button
+    $optionBtn.classList.add('option', 'btn');
+    $optionBtn.title = "change color";
+    $optionBtn.textContent = 'O';
+    $optionBtn.addEventListener('click', e => {
+      var ta_style = $optionBtn.querySelector('textarea').style;
+      var currentColorNo = COLORs.indexOf(ta_style.backgroundColor);
+      ta_style.backgroundColor = COLORs[(currentColorNo + 1) % COLORs.length];
+      _save();
+    });
+  },
+
+  _createTextarea: info => {
+    var { $newTextarea, _save } = Memo;
+
+    $newTextarea.rows = "7";
+    $newTextarea.style.background = info.color || COLORs[0];
+    $newTextarea.value = info.val || "";
+
+    $newTextarea.addEventListener('focusout', _save);
+    $newTextarea.addEventListener('keypress', _save);
+  },
+
+  _combine: isInit => {
+    var { $newDiv, $newHoldbar, $delBtn, $optionBtn, $newTextarea } = Memo;
+
+    $newDiv.appendChild($newHoldbar);
+    $newDiv.appendChild($delBtn);
+    $newDiv.appendChild($optionBtn);
+    $newDiv.appendChild($newTextarea);
+    document.body.appendChild($newDiv);
+
+    if (!isInit) $newTextarea.focus();
+  },
+
+  _save: () => {
+    var { $newTextarea, $newDiv } = Memo;
+
     browser.runtime.sendMessage({
       behavior: 'save_memo',
       url: location.href,
-      memo_id: newTextarea.parentNode.dataset['pagememoId'],
-      val: newTextarea.value,
-      color: newTextarea.style.backgroundColor,
+      memo_id: $newTextarea.parentNode.dataset['pagememoId'],
+      val: $newTextarea.value,
+      color: $newTextarea.style.backgroundColor,
       position: {
-        x: newDiv.style.left,
-        y: newDiv.style.top,
-        width: newDiv.style.width
+        x: $newDiv.style.left,
+        y: $newDiv.style.top,
+        width: $newDiv.style.width
       }
     });
-  };
-
-  var ta_counter = 0;
-  newTextarea.addEventListener('focusout', sendData);
-  newTextarea.addEventListener('keypress', function(){
-    ta_counter += 1;
-    if (ta_counter % 10 != 0) return;
-    sendData();
-  });
-
-  // holdbar
-  var moving = false;
-  var toggleMoving = () => {
-    moving = !moving;
-    if (moving) {
-      newDiv.style.opacity = '1';
-      newHoldbar.style.cursor = 'grabbing';
-      newTextarea.style.cursor = 'grabbing';
-
-      $width = newDiv.offsetWidth / 2;
-
-      document.addEventListener('mousemove', e => {
-        if (moving) {
-          var x = e.clientX - $width;
-          var y = e.clientY - document.querySelector('body').getBoundingClientRect().y;
-
-          newDiv.style.left = x+'px';
-          newDiv.style.top = y+'px';
-          newDiv.style.right = undefined;
-        };
-      });
-    }
-    else {
-      newHoldbar.style.cursor = 'grab';
-      newTextarea.style.cursor = 'auto';
-      sendData();
-    }
   }
-
-  newHoldbar.addEventListener('click', toggleMoving);
-  newHoldbar.addEventListener('mouseover', () => {
-    var hintSpan = document.createElement('SPAN');
-    var hintText = document.createTextNode(browser.i18n.getMessage("moveHint"));
-    hintSpan.appendChild(hintText);
-    hintSpan.style.color = 'rgba(0,0,0,0.3)';
-    newHoldbar.appendChild(hintSpan);
-  });
-  newHoldbar.addEventListener('mouseout', () => {
-    newHoldbar.textContent = '';
-  });
-
-  var holdbarStyles = {
-    'cursor': 'grab',
-    'position': 'absolute',
-    'top': '0',
-    'left': '0',
-    'width': '100%',
-    'height': '18px',
-    'textAlign': 'center',
-    'background': 'transparent linear-gradient(rgba(0, 0, 0, 0.1), transparent) repeat scroll 0% 0%'
-  };
-  for( var style in holdbarStyles) {
-    newHoldbar.style[style] = holdbarStyles[style];
-  }
-
-  var btnStyles = {
-    'color': '#343434',
-    'cursor': 'pointer',
-    'float': 'right',
-    'position': 'absolute',
-    'padding': '3px 5px',
-    'textDecoration': 'none'
-  };
-
-  // delete button
-  delBtn.addEventListener('click', () => {
-    delBtn.parentNode.remove();
-    browser.runtime.sendMessage({
-      behavior: 'del_memo',
-      url: location.href,
-      memo_id: delBtn.parentNode.dataset['pagememoId']
-    });
-  });
-  delBtn.title = "delete";
-  for( var style in btnStyles) {
-    delBtn.style[style] = btnStyles[style];
-  }
-  delBtn.style.right = '0';
-  delBtn.addEventListener('mouseover', () => {
-    delBtn.style.color = '#aaa';
-  });
-  delBtn.addEventListener('mouseout', () => {
-    delBtn.style.color = '#343434';
-  });
-
-  // option button
-  optionBtn.addEventListener('click', e => {
-    var {target} = e,
-      div = target.parentNode,
-      ta_style = div.querySelector('textarea').style;
-    var currentColorNo = COLORs.indexOf(ta_style.backgroundColor);
-    ta_style.backgroundColor = COLORs[(currentColorNo + 1) % COLORs.length];
-    div.style.opacity = '1';
-    sendData();
-  });
-  optionBtn.title = "change color";
-  for( var style in btnStyles) {
-    optionBtn.style[style] = btnStyles[style];
-  }
-  optionBtn.style.left = '0';
-  optionBtn.addEventListener('mouseover', () => {
-    optionBtn.style.color = '#aaa';
-  });
-  optionBtn.addEventListener('mouseout', () => {
-    optionBtn.style.color = '#343434';
-  });
-
-
-  delBtn.textContent = 'X';
-  optionBtn.textContent = 'O';
-  newDiv.appendChild(newHoldbar);
-  newDiv.appendChild(delBtn);
-  newDiv.appendChild(optionBtn);
-  newDiv.appendChild(newTextarea);
-  document.body.appendChild(newDiv);
-
-  if (!isInit) newTextarea.focus();
 };
 
 document.addEventListener('contextmenu', e => {
@@ -187,7 +144,7 @@ document.addEventListener('contextmenu', e => {
     x: e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft,
     pageWidth: document.body.clientWidth
   }).then( res => {
-    createMemo({
+    Memo.create({
       x: res.x,
       y: e.clientY + document.body.scrollTop + document.documentElement.scrollTop,
       isInit: false
@@ -202,7 +159,7 @@ browser.runtime.sendMessage({
   if (memos) {
     for (var key in memos) {
       var memo = memos[key];
-      createMemo({
+      Memo.create({
         x: memo.position.x,
         y: memo.position.y,
         val: memo.val,
