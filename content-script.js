@@ -2,14 +2,21 @@ const COLORs = ['lightyellow', 'lightblue', 'pink', 'lightgreen'];
 
 var Memo = {
   $container: null,
-  $newDiv: document.createElement('div'),
-  $newHoldbar: document.createElement('div'),
-  $delBtn: document.createElement('a'),
-  $optionBtn: document.createElement('a'),
-  $newTextarea: document.createElement('textarea'),
+  $newDiv: null,
+  $newHoldbar: null,
+  $delBtn: null,
+  $optionBtn: null,
+  $newTextarea: null,
 
   create: info => {
     var me = Memo;
+    me.$container = null;
+    me.$newDiv = document.createElement('div');
+    me.$newHoldbar = document.createElement('div');
+    me.$delBtn = document.createElement('a');
+    me.$optionBtn = document.createElement('a');
+    me.$newTextarea = document.createElement('textarea');
+
     var { key, x, y, val, color, isInit } = info;
 
     me._createContnainer({
