@@ -134,6 +134,7 @@ var pageMemo = {
             memo.position = msg.position;
             memo.val = msg.val;
             memo.color = msg.color;
+            memo.width = msg.width;
 
             browser.storage.local.set(pageMemo_data);
           });

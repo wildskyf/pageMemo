@@ -1,5 +1,6 @@
 const COLORs = ['lightyellow', 'lightblue', 'pink', 'lightgreen'];
 
+
 var Memo = {
   $container: null,
   $newDiv: null,
@@ -17,7 +18,7 @@ var Memo = {
     me.$optionBtn = document.createElement('a');
     me.$newTextarea = document.createElement('textarea');
 
-    var { key, x, y, val, color, isInit } = info;
+    var { key, x, y, val, color, isInit, width } = info;
 
     me._createContnainer({
       key: key,
@@ -28,7 +29,8 @@ var Memo = {
     me._createButtons();
     me._createTextarea({
       val: val,
-      color: color
+      color: color,
+      width: width
     });
     me._combine(isInit);
   },
@@ -56,6 +58,7 @@ var Memo = {
     function eleMouseUp () {
       document.removeEventListener("mousemove" , eleMouseMove , false);
       document.removeEventListener("mouseup" , eleMouseUp , false);
+
       _save();
     }
 
@@ -100,10 +103,13 @@ var Memo = {
 
     $newTextarea.rows = "7";
     $newTextarea.style.background = info.color || COLORs[0];
+    $newTextarea.style.width = info.width || "auto";
+
     $newTextarea.value = info.val || "";
 
     $newTextarea.addEventListener('focusout', _save);
     $newTextarea.addEventListener('keypress', _save);
+    $newTextarea.addEventListener('mouseup', _save());
   },
 
   _combine: isInit => {
@@ -127,10 +133,10 @@ var Memo = {
       memo_id: $newTextarea.parentNode.dataset['pagememoId'],
       val: $newTextarea.value,
       color: $newTextarea.style.backgroundColor,
+      width: $newTextarea.style.width,
       position: {
         x: $newDiv.style.left,
-        y: $newDiv.style.top,
-        width: $newDiv.style.width
+        y: $newDiv.style.top
       }
     });
   }
@@ -157,13 +163,15 @@ browser.runtime.sendMessage({
   if (memos) {
     for (var key in memos) {
       var memo = memos[key];
+      console.log(memo);
       Memo.create({
         x: memo.position.x,
         y: memo.position.y,
         val: memo.val,
         color: memo.color,
         isInit: true,
-        key: key
+        key: key,
+        width: memo.width
       });
     }
   }
