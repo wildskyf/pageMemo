@@ -109,7 +109,7 @@ var Memo = {
 
     $newTextarea.addEventListener('focusout', _save);
     $newTextarea.addEventListener('keypress', _save);
-    $newTextarea.addEventListener('mouseup', _save());
+    $newTextarea.addEventListener('mouseup', _save);
   },
 
   _combine: isInit => {
@@ -125,12 +125,12 @@ var Memo = {
   },
 
   _save: () => {
-    var { $newTextarea, $newDiv } = Memo;
+    var { $newDiv, $newTextarea, $newDiv } = Memo;
 
     browser.runtime.sendMessage({
       behavior: 'save_memo',
       url: location.href,
-      memo_id: $newTextarea.parentNode.dataset['pagememoId'],
+      memo_id: $newDiv.dataset['pagememoId'],
       val: $newTextarea.value,
       color: $newTextarea.style.backgroundColor,
       width: $newTextarea.style.width,
