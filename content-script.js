@@ -70,7 +70,7 @@ var Memo = {
   },
 
   _createButtons: () => {
-    var { $delBtn, $optionBtn, _save } = Memo;
+    var { $newTextarea, $delBtn, $optionBtn, _save } = Memo;
 
     // delete button
     $delBtn.classList.add('delete', 'btn');
@@ -91,7 +91,7 @@ var Memo = {
     $optionBtn.title = "change color";
     $optionBtn.textContent = 'O';
     $optionBtn.addEventListener('click', e => {
-      var ta_style = $optionBtn.querySelector('textarea').style;
+      var ta_style = $newTextarea.style;
       var currentColorNo = COLORs.indexOf(ta_style.backgroundColor);
       ta_style.backgroundColor = COLORs[(currentColorNo + 1) % COLORs.length];
       _save();
@@ -132,7 +132,7 @@ var Memo = {
       url: location.href,
       memo_id: $newDiv.dataset['pagememoId'],
       val: $newTextarea.value,
-      color: $newTextarea.style.backgroundColor,
+      color: $newTextarea.style.backgroundColor || COLORs[0],
       width: $newTextarea.style.width,
       position: {
         x: $newDiv.style.left,
