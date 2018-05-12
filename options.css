@@ -1,0 +1,144 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  background: #f3f6fa;
+  font-family: "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  max-height: 100vh;
+}
+.clearfix:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+.actions {
+  width: 100%;
+  max-width: 980px;
+  margin: auto;
+  padding: 40px 0;
+}
+.action {
+  display: inline-block;
+  width: calc(50% - 40px);
+  float: left;
+  height: 200px;
+  line-height: 200px;
+  font-size: 40px;
+  background: #aaa;
+  color: #fff;
+  margin: 0 20px;
+  cursor: pointer;
+  box-shadow: 3px 3px 3px rgba(0,0,0,0.25);
+  transition-duration: .2s;
+}
+.action:hover {
+  box-shadow: 4px 4px 4px rgba(0,0,0,0.5);
+}
+
+#action-modal.modal-overlay {
+  position: fixed;
+  top: 100vh;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.75);
+  opacity: 0;
+  transition-duration: .3s;
+}
+
+#action-modal.modal-overlay.show {
+  opacity: 1;
+  top: 0;
+}
+
+#action-modal .modal-inner {
+  width: 50vw;
+  height: 50vh;
+  margin: 15vh auto 0;
+  background: #fff;
+  border-radius: 3px;
+  box-shadow: 3px 3px 3px rgba(0,0,0,0.25);
+  position: relative;
+}
+
+#action-modal .close-btn {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  color: #aaa;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  margin: 10px;
+  float: right;
+  border: 1px solid;
+}
+
+#action-modal .close-btn:hover {
+  background: rgba(0,0,0,0.2);
+  color: #343434;
+}
+
+#action-modal .modal-content {
+  display: none;
+}
+#action-modal .modal-content.show {
+  display: block;
+}
+
+#action-modal h2 {
+  margin: 0 0 1em;
+}
+
+#modal-confirm {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  border: 1px solid #343434;
+  padding: .5em;
+  border-radius: 3px;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.25);
+  opacity: .75;
+  cursor: pointer;
+}
+
+#modal-confirm:hover {
+  opacity: 1;
+  transition-duration: .2s;
+}
+
+#modal-confirm[disabled] {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+#modal-confirm[disabled]:after {
+  display: block;
+  content: 'select file first!';
+  position: absolute;
+  width: 200px;
+  bottom: 45px;
+  background: #000000;
+  color: #fff;
+  padding: 5px;
+  right: 0;
+  opacity: 0;
+  transition-duration: .3s;
+}
+
+#modal-confirm[disabled]:hover:after {
+  opacity: 1;
+}
+
+#import-content #modal-hint {
+  display: none;
+}
+#import-content.done .import-ui {
+  display: none;
+}
+#import-content.done #modal-hint {
+  display: block;
+}

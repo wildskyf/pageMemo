@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Options Page</title>
+  <link rel="stylesheet" href="options.css">
+  <script src="./options.js"></script>
+</head>
+<body>
+  <div id="header">
+    <h1>Options page of PageMemo</h1>
+  </div>
+  <div class="actions clearfix">
+    <div id="export" class="action">
+      export
+    </div>
+    <div id="import" class="action">
+      import
+    </div>
+  </div>
+  <div id="action-modal" class="modal-overlay">
+    <div class="modal-inner">
+      <div class="modal-header clearfix">
+        <div class="close-btn">X</div>
+      </div>
+      <div class="modal-content" id="export-content">
+        <h2>Export Memos</h2>
+      </div>
+      <div class="modal-content" id="import-content">
+        <div class="import-ui">
+          <h2>Import Memos</h2>
+          <input type="file" id="import-src">
+          <div id="modal-confirm" disabled>import!</div>
+        </div>
+        <div id="modal-hint">Import Done!</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
