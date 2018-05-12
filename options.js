@@ -54,10 +54,11 @@ window.addEventListener('load', () => {
             delete importData.verify;
             var $confirm_btn = $content.querySelector('#modal-confirm');
             $confirm_btn.removeAttribute('disabled');
-            $confirm_btn.onclick = () => {
+            $confirm_btn.onclick = async () => {
               const confirm_msg = 'Your current data will be overwrited, do you really want to import?';
               if (!confirm(confirm_msg)) return;
-              browser.storage.local.set(importData);
+              await browser.storage.local.clear();
+              await browser.storage.local.set(importData);
               $content.classList.add('done');
 
               window.setTimeout(() => {
