@@ -1,9 +1,5 @@
 var isDev = false;
 
-browser.tabs.create({
-  url: browser.extension.getURL('./options.html')
-});
-
 var pageMemo = {
   contextmenu_info: null,
 
